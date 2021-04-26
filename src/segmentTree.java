@@ -1,3 +1,4 @@
+//see cses
 class segmentTree{
     int l,r;
     segmentTree lchild,rchild;
@@ -40,12 +41,13 @@ class segmentTree{
     }
 }
 class segTreeSum{
-    int n,tree[];
+    int n;
+    long tree[];
     
     //v=vertex/node
     public segTreeSum(int l,int r,int v,int a[]) {
         n=a.length;
-        tree=new int[4*n];
+        tree=new long[4*n];
         build(l, r, v, a);
     }
     
@@ -60,7 +62,7 @@ class segTreeSum{
         }
     }
     
-    int sum(int v,int tl,int tr,int l,int r) {
+    long sum(int v,int tl,int tr,int l,int r) {
         if(l>r) return 0;
         if(l==tl&&r==tr) return tree[v];
         int tm=(tl+tr)/2;
@@ -68,14 +70,30 @@ class segTreeSum{
                 +sum(v*2+1,tm+1,tr,Math.max(tm+1,l),r);
     }
     
-    void update(int v,int tl,int tr,int pos,int val) {
+    void pointUpdate(int v,int tl,int tr,int pos,int val) {
         if(tl==tr) tree[v]=val;
         else {
             int tm=(tl+tr)/2;
-            if(pos<=tm) update(v*2,tl,tm,pos,val);
-            else update(v*2+1, tm+1, tr, pos, val);
+            if(pos<=tm) pointUpdate(v*2,tl,tm,pos,val);
+            else pointUpdate(v*2+1, tm+1, tr, pos, val);
             tree[v]=tree[v*2]+tree[v*2+1];
         }
+    }
+    void rangeUpdate(int v, int tl, int tr, int l, int r, int add) {
+        if(l>r) return;
+        if(l==tl&&r==tr) {
+            tree[v]+=add;
+        }else {
+            int tm=(tl+tr)/2;
+            rangeUpdate(v*2, tl, tm, l, Math.min(r, tm), add);
+            rangeUpdate(v*2+1, tm+1, tr, Math.max(l, tm+1), r, add);
+        }
+    }
+    long get(int v,int tl,int tr,int inx) {
+        if(tl==tr) return tree[v];
+        int tm=(tl+tr)/2;
+        if(inx<=tm) return tree[v]+get(v*2,tl,tm,inx);
+        return tree[v]+get(v*2+1,tm+1,tr,inx);
     }
 }
 
@@ -122,5 +140,41 @@ class segTreeRMQ {
                 update(v*2+1,tm+1,tr,pos,val);
             tree[v]=Math.min(tree[v*2],tree[v*2+1]);
         }
+    }
+}
+class segTreeUpdate{
+    int n;
+    long tree[];
+    
+    public segTreeUpdate(int v,int l,int r,int a[]) {
+        n=a.length;
+        tree=new long[4*n];
+        build(v,l,r,a);
+    }
+    
+    void build(int v,int tl,int tr,int a[]) {
+        if(tl==tr) tree[v]=a[tl];
+        else {
+            int tm=(tl+tr)/2;
+            build(2*v,tl, tm, a);
+            build(2*v+1,tm+1,tr,a);
+            tree[v]=0;
+        }
+    }
+    void rangeUpdate(int v, int tl, int tr, int l, int r, int add) {
+        if(l>r) return;
+        if(l==tl&&r==tr) {
+            tree[v]+=add;
+        }else {
+            int tm=(tl+tr)/2;
+            rangeUpdate(v*2, tl, tm, l, Math.min(r, tm), add);
+            rangeUpdate(v*2+1, tm+1, tr, Math.max(l, tm+1), r, add);
+        }
+    }
+    long get(int v,int tl,int tr,int inx) {
+        if(tl==tr) return tree[v];
+        int tm=(tl+tr)/2;
+        if(inx<=tm) return tree[v]+get(v*2,tl,tm,inx);
+        return tree[v]+get(v*2+1,tm+1,tr,inx);
     }
 }
