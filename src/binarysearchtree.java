@@ -135,7 +135,4 @@ public class binarysearchtree<T extends Comparable<T>> {
         postOrder(root.right);
         System.out.print(root.data + " ");
     }
-    public static void main(String[] args) {
-        binarysearchtree<Character> b=new binarysearchtree<>();
-    }
 }

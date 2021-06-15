@@ -5,7 +5,7 @@ public class BellmanFord {
     public static void main(String[] args) {
         createGraph();
         int n=5; //Number of nodes/vertices
-        int INF=(int)1e9;
+        final int INF=(int)1e9;
         //Main algorithm starts here
         int distance[]=new int[n+1];
         for(int i=0;i<=n;i++) distance[i]=INF;

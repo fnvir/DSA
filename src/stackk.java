@@ -1,5 +1,5 @@
 public class stackk {
-    static class node {
+    class node {
         int data;
         node next;
         node(int d,node n){data=d;next=n;}

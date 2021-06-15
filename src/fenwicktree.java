@@ -1,4 +1,3 @@
-public 
 class fenwicktree {
     private long tree[]; //1-based index
     
@@ -32,7 +31,7 @@ class fenwicktree {
     }
     
     //adds x to the index i
-    public void add(long x,int i) {
+    public void add(int i,long x) {
         while(i<tree.length) {
             tree[i]+=x;
             i+=lsb(i);
@@ -41,6 +40,6 @@ class fenwicktree {
     //set index i to x
     public void set(int i,long x) {
         long val=sum(i,i);
-        add(x-val,i);
+        add(i,x-val);
     }
 }

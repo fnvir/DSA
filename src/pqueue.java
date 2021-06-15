@@ -66,7 +66,7 @@ public class pqueue<T extends Comparable<T>> {
     private void mapRemove(T value, int index) {
         TreeSet<Integer> set = map.get(value);
         set.remove(index); // TreeSets take O(log(n)) removal time
-        if (set.size() == 0) map.remove(value);
+        if (set.isEmpty()) map.remove(value);
     }
     
     private boolean less(int i, int j) {

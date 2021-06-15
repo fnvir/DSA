@@ -23,7 +23,7 @@ public class Djikstra {
             int a=q.poll().node;
             if(visited[a]) continue;
             visited[a]=true;
-            for(var u:list[a]) {
+            for(pair u:list[a]) {
                 int b=u.distance,w=u.node;
                 if(distance[a]+w<distance[b]) {
                     distance[b]=distance[a]+w;
@@ -49,11 +49,14 @@ public class Djikstra {
             node=n;
         }
         public int compareTo(pair o) {
-            if(this.distance-o.distance>0) return 1;
-            else if(this.distance-o.distance<0) return -1;
-            else if(this.node-o.node>0) return -1;
-            else if(this.node-o.node<0) return 1;
-            else return 0;
+            int x=Integer.compare(distance,o.distance);
+            if(x==0) return Integer.compare(node,o.node);
+            return x;
+//            if(this.distance-o.distance>0) return 1;
+//            else if(this.distance-o.distance<0) return -1;
+//            else if(this.node-o.node>0) return -1;
+//            else if(this.node-o.node<0) return 1;
+//            else return 0;
         }
     }
 }
