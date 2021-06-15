@@ -1,1 +1,1 @@
-# Beginner data structures and algorithms I implemented
+# Beginner data structures and algorithms
