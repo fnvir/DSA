@@ -24,7 +24,7 @@ public class useful_algorithms {
         return low;
     }
     //Alternatively:
-    /*
+    /***
     C++, lower_bound() should return an index to the first element in the sorted container that is equal to or above
     the number being looked up, and -1 if there is no such element.
 
@@ -34,7 +34,7 @@ public class useful_algorithms {
     In Java, you can use Collections.binarySearch to find the lower bound of the equal range in a 
     sorted list (Arrays.binarySearch provides a similar capability for arrays). 
     Then you continue iterating linearly until you hit to the end of the equal range.
-    */
+    ***/
     //C++ upperbound
     static int upperBound(int[] a, int low, int high, int element) {
         while (low < high) {
@@ -46,6 +46,28 @@ public class useful_algorithms {
             }
         }
         return low;
+    }
+    //print all subarrays
+    //exact complexity: n*(n+1)*(n+2)/6
+    static void subarrays(int a[]) {
+        int n=a.length;
+        for(int i=0;i<n;i++)
+            for(int j=i;j<n;j++){
+                for(int k=i;k<=j;k++)
+                    System.out.print(a[k]+" ");
+                System.out.println();
+            }
+    }
+    // all subsequences a.k.a. powerset
+    // complexity: O(2^n * n)
+    static void powerset(int a[]) {
+        int n=a.length;
+        for(int i=0;i<n*n;i++) {
+            for(int j=0;j<n;j++)
+                if((i&(1<<j))>0)
+                    System.out.print(a[j]+" ");
+            System.out.println();
+        }
     }
     //No. of Divisors
     static int divisors(int n) {
@@ -193,5 +215,29 @@ public class useful_algorithms {
         System.out.println("Used Memory: "
                 + (instance.totalMemory() - instance.freeMemory()) / kb);
         System.out.println("Max Memory: " + instance.maxMemory() / kb);
+    }
+    // prints 2d array as table .......
+    static void drawTable(Object table[][]) {
+        var pr=new java.io.PrintWriter(System.out);
+        int n=table.length,m=table[0].length;
+        StringBuilder sb=new StringBuilder();
+        sb.append("+");
+        int cl[]=new int[m];
+        for(int j=0;j<m;j++) {
+            for(int i=0;i<n;i++)
+                cl[j]=Math.max(cl[j],(table[i][j]+"").length()+2);
+            sb.append("-".repeat(cl[j])+"+");
+        }
+        pr.println(sb);
+        for(int i=0;i<n;i++) {
+            pr.print("|");
+            for(int j=0;j<m;j++) {
+                String s=" "+table[i][j];
+                pr.print(s+" ".repeat(cl[j]-s.length())+"|");
+            }
+            pr.println();
+            pr.println(sb);
+        }
+        pr.close();
     }
 }
