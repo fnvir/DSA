@@ -1,3 +1,4 @@
+
 public class useful_algorithms {
     //Sieve of Eratosthenes 
     static void sieve() {
@@ -49,7 +50,7 @@ public class useful_algorithms {
     }
     //print all subarrays
     //exact complexity: n*(n+1)*(n+2)/6
-    static void subarrays(int a[]) {
+    public static void subarrays(int a[]) {
         int n=a.length;
         for(int i=0;i<n;i++)
             for(int j=i;j<n;j++){
@@ -87,6 +88,16 @@ public class useful_algorithms {
         System.out.println();
         return c;
     }
+    // ceil(log2(n))
+    int log2(int n) {
+        return 31-Integer.numberOfLeadingZeros(n);
+        //return 63-Long.numberOfLeadingZeros(n); //for Long
+//        return Integer.numberOfTrailingZeros(Integer.highestOneBit(n));
+    }
+    //fast ceil
+    int ceil(int a,int b) {
+        return (a+b-1)/b;
+    }
     //GCD
     static int gcd(int a,int b) {
         return b==0?a:gcd(b,a%b);
@@ -107,7 +118,8 @@ public class useful_algorithms {
         return res;
     }
     // a^b % m
-    static long binpow(long a, long b,long m) {
+    // using binary exponentiation
+    static long powmod(long a, long b,long m) {
         a %= m;
         long res = 1;
         while (b > 0) {
@@ -117,6 +129,25 @@ public class useful_algorithms {
             b >>= 1;
         }
         return res;
+    }
+    // (a+b) % mod
+    //Constraints: 0<=a,b<MOD
+    //If both a and b are in range [0,MOD-1] and MOD is less than INT_MAX/2,
+    // which is usually the case, then it's correct.
+    int MOD=9;
+    int addmod(int a,int b){
+        a+=b;
+        if(a>=MOD)
+            a-=MOD;
+        return a;
+    }
+    // Diff % mod
+    //Constraints: 0<=a,b<MOD
+    int submod(int a,int b){
+        a-=b;
+        if(a<0)
+            a+=MOD;
+        return a;
     }
     //Fast Inverse Square root (1/sqrt(x))
     //Not 100% accurate
@@ -160,33 +191,10 @@ public class useful_algorithms {
 //        }
 //        if(n>2) hs.add((int)n);
 //    }
-    int log2(int n) {
-        return 31-Integer.numberOfLeadingZeros(n);
-        //return 63-Long.numberOfLeadingZeros(n); //for Long
-//        return Integer.numberOfTrailingZeros(Integer.highestOneBit(n));
-    }
-    //fast ceil
-    int ceil(int a,int b) {
-        return (a+b-1)/b;
-    }
-    // sum % mod
-    //If both a and b are in range [0,MOD-1] and MOD is less than INT_MAX/2,
-    // which is usually the case, then it's correct.
-    int MOD=9;
-    int add(int a,int b){
-        a+=b;
-        if(a>=MOD)
-            a-=MOD;
-        return a;
-    }
-    // Diff % mod
-    //Constraints: 0<=a,b<MOD
-    int sub(int a,int b){
-        a-=b;
-        if(a<0)
-            a+=MOD;
-        return a;
-    }
+
+    
+    
+    
     static int read(){int z=-1;try{z=System.in.read();}catch(Throwable e){}return z;} 
     static char nextChar(){char c=0;do c=(char)read();while(c<=32);return c;}
     static int nextInt(){
@@ -207,37 +215,47 @@ public class useful_algorithms {
         for(int c=nextChar();c>=32;c=read())s.append((char)c);
         return s.toString();
     }
+    
+    
+    
     public static void memoryStats() {
         int kb = 1024;
-        Runtime instance = Runtime.getRuntime();
-        System.out.println("Total Memory: " + instance.totalMemory() / kb);
-        System.out.println("Free Memory: " + instance.freeMemory() / kb);
-        System.out.println("Used Memory: "
-                + (instance.totalMemory() - instance.freeMemory()) / kb);
-        System.out.println("Max Memory: " + instance.maxMemory() / kb);
+        Runtime rt = Runtime.getRuntime();
+        System.out.println("Total Memory: "+rt.totalMemory()/kb);
+        System.out.println("Free Memory: " +rt.freeMemory()/kb);
+        System.out.println("Used Memory: "+(rt.totalMemory()-rt.freeMemory())/kb);
+        System.out.println("Max Memory: " +rt.maxMemory()/kb);
     }
+    
+
     // prints 2d array as table .......
-    static void drawTable(Object table[][]) {
-        var pr=new java.io.PrintWriter(System.out);
+    static void printTable(Object table[][]) {
         int n=table.length,m=table[0].length;
-        StringBuilder sb=new StringBuilder();
-        sb.append("+");
+        StringBuilder sb=new StringBuilder("+");
         int cl[]=new int[m];
         for(int j=0;j<m;j++) {
             for(int i=0;i<n;i++)
                 cl[j]=Math.max(cl[j],(table[i][j]+"").length()+2);
-            sb.append("-".repeat(cl[j])+"+");
+            sb.append("-".repeat(cl[j])).append("+");
         }
-        pr.println(sb);
+        System.out.println(sb);
+        StringBuilder pr=new StringBuilder();
         for(int i=0;i<n;i++) {
-            pr.print("|");
+            pr.append("|");
             for(int j=0;j<m;j++) {
                 String s=" "+table[i][j];
-                pr.print(s+" ".repeat(cl[j]-s.length())+"|");
+                int x=cl[j]-s.length();
+                pr.append(" ".repeat(x/2)).append(s).append(" ".repeat(x-x/2)).append("|"); //center
+//                pr.append(s).append(" ".repeat(x)).append("|");
             }
-            pr.println();
-            pr.println(sb);
+            pr.append('\n').append(sb);
+            System.out.println(pr);
+            pr.setLength(0);
         }
-        pr.close();
     }
+    public static void main(String[] args) {
+        Object a[][]= {{0.0001,2.54,-3.6656},{3001,4,-65},{-2.2,4,-65566556565565l}};
+        printTable(a);
+    }
+    
 }
