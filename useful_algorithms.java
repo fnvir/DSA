@@ -1,10 +1,12 @@
+import java.math.BigInteger;
 
 public class useful_algorithms {
     //Sieve of Eratosthenes 
     static void sieve() {
         int n=1000005;
         boolean prime[]=new boolean[n+1];
-        for(int i=0;i<n;i++) prime[i]=true; 
+//        prime[0]=prime[1]=false;
+        for(int i=2;i<n;i++) prime[i]=true; 
         for(int p=2;p*p<=n;p++){ 
             if(prime[p]) { 
                 for(int i=p*p;i<=n;i+=p)
@@ -48,6 +50,18 @@ public class useful_algorithms {
         }
         return low;
     }
+    static String randStr(int n) {
+        StringBuilder sb=new StringBuilder();
+        char[] start= {'A','a','1'}, end= {'Z','z','9'};
+        for(int i=0;i<n;i++) {
+            int z=randint(0,start.length-1);
+            sb.append((char)randint(start[z],end[z]));
+        }
+        return sb.toString();
+    }
+    static int randint(int mn,int mx) {
+        return (int)Math.round(Math.random()*(mx-mn)+mn);
+    }
     //print all subarrays
     //exact complexity: n*(n+1)*(n+2)/6
     public static void subarrays(int a[]) {
@@ -63,7 +77,7 @@ public class useful_algorithms {
     // complexity: O(2^n * n)
     static void powerset(int a[]) {
         int n=a.length;
-        for(int i=0;i<n*n;i++) {
+        for(int i=0;i<1<<n;i++) {
             for(int j=0;j<n;j++)
                 if((i&(1<<j))>0)
                     System.out.print(a[j]+" ");
@@ -73,7 +87,7 @@ public class useful_algorithms {
     //No. of Divisors
     static int divisors(int n) {
         int c=0;
-        for(int i=1;i<=Math.sqrt(n);i++) {
+        for(int i=1;i*i<=n;i++) {
             if(n%i==0) {
                 if(n/i==i) {
                     c++;
@@ -103,7 +117,7 @@ public class useful_algorithms {
         return b==0?a:gcd(b,a%b);
     }
     //LCM
-    static int lcm(int a, int b) {
+    static int lcm(int a,int b) {
         return (a/gcd(a,b))*b;
     }
     //Computes a^b using binary exponentiation
@@ -119,7 +133,7 @@ public class useful_algorithms {
     }
     // a^b % m
     // using binary exponentiation
-    static long powmod(long a, long b,long m) {
+    static long powmod(long a, long b,int m) {
         a %= m;
         long res = 1;
         while (b > 0) {
@@ -231,31 +245,55 @@ public class useful_algorithms {
     // prints 2d array as table .......
     static void printTable(Object table[][]) {
         int n=table.length,m=table[0].length;
-        StringBuilder sb=new StringBuilder("+");
+        StringBuilder div=new StringBuilder("+");
         int cl[]=new int[m];
         for(int j=0;j<m;j++) {
             for(int i=0;i<n;i++)
                 cl[j]=Math.max(cl[j],(table[i][j]+"").length()+2);
-            sb.append("-".repeat(cl[j])).append("+");
+            div.append("-".repeat(cl[j])).append("+");
         }
-        System.out.println(sb);
-        StringBuilder pr=new StringBuilder();
+        System.out.println(div);
+        StringBuilder sb=new StringBuilder();
         for(int i=0;i<n;i++) {
-            pr.append("|");
+            sb.append("|");
             for(int j=0;j<m;j++) {
                 String s=" "+table[i][j];
                 int x=cl[j]-s.length();
-                pr.append(" ".repeat(x/2)).append(s).append(" ".repeat(x-x/2)).append("|"); //center
-//                pr.append(s).append(" ".repeat(x)).append("|");
+                sb.append(" ".repeat(x/2)).append(s).append(" ".repeat(x-x/2)).append("|"); //center
+//                sb.append(s).append(" ".repeat(x)).append("|");
             }
-            pr.append('\n').append(sb);
-            System.out.println(pr);
-            pr.setLength(0);
+            sb.append('\n').append(div);
+            System.out.println(sb);
+            sb.setLength(0);
         }
     }
+    static long nPr(int n,int r) {
+        long x=1;
+        for(int i=n-r+1;i<=n;i++) x*=i;
+        return x;
+    }
+    static long nCr(int n,int r) { //possibility of overflow
+        long x=1;
+        for(int i=1;i<=r;i++) x=(x*(n-r+i))/i; //the product of k consecutive integers is divisible by k!
+        return x;
+    }
+    
+//    static BigInteger npr(int n,int r) {
+//        BigInteger x=BigInteger.ONE;
+//        for(int i=1;i<=r;i++) x=x.multiply(new BigInteger(n-r+i+""));
+//        return x;
+//    }
+//    static BigInteger ncr(int n,int r) {
+//        BigInteger x=BigInteger.ONE;
+//        for(int i=1;i<=r;i++) x=x.multiply(new BigInteger(n-r+i+"")).divide(new BigInteger(i+""));
+//        return x;
+//    }
+    
+    
+    
     public static void main(String[] args) {
-        Object a[][]= {{0.0001,2.54,-3.6656},{3001,4,-65},{-2.2,4,-65566556565565l}};
-        printTable(a);
+//        Object a[][]= {{0.0001,2.54,-3.6656},{"hello",4,-65},{2e-90,4,-6556656565565l}};
+//        printTable(a);
     }
     
 }
