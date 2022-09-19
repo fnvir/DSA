@@ -1,4 +1,4 @@
-public class SparseTableRMQ{
+class SparseTableRMQ{
     int n,P,log2[],inx[][];
     long dp[][];
     

@@ -40,6 +40,7 @@ class segmentTree{
         return lchild.rangeSum(lft, rght)+rchild.rangeSum(lft, rght);
     }
 }
+
 class segTreeSum{
     int n;
     long tree[];

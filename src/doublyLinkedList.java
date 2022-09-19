@@ -259,15 +259,15 @@ public class doublyLinkedList<T> implements Iterable<T> {
         return cl;
     }
     
-//    public static void main(String[] args) {
-//        doublyLinkedList<Integer> ll=new doublyLinkedList<>();
-//        ll.add(1);
-//        ll.add(2);
-//        ll.add(3);
-//        ll.add(4);
-//        doublyLinkedList<Integer> ll2=ll.clone();
-//        ll.reverse();
-//        System.out.println(ll);
-//        System.out.println(ll2);
-//    }
+    public static void main(String[] args) {
+        doublyLinkedList<Integer> ll=new doublyLinkedList<>();
+        ll.add(1);
+        ll.add(2);
+        ll.add(3);
+        ll.add(4);
+        doublyLinkedList<Integer> ll2=ll.clone();
+        ll.reverse();
+        System.out.println(ll2);
+        System.out.println(ll);
+    }
 }
