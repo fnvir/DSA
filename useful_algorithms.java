@@ -7,7 +7,7 @@ public class useful_algorithms {
         boolean prime[]=new boolean[n+1];
 //        prime[0]=prime[1]=false;
         for(int i=2;i<n;i++) prime[i]=true; 
-        for(int p=2;p*p<=n;p++){ 
+        for(int p=2;(long)p*p<=n;p++){ 
             if(prime[p]) { 
                 for(int i=p*p;i<=n;i+=p)
                     prime[i] = false; 
@@ -93,25 +93,29 @@ public class useful_algorithms {
         System.out.println();
         return c;
     }
-    // ceil(log2(n))
-    int log2(int n) {
+    // floor(log2(n))
+    static int log2(int n) {
         return 31-Integer.numberOfLeadingZeros(n);
         //return 63-Long.numberOfLeadingZeros(n); //for Long
 //        return Integer.numberOfTrailingZeros(Integer.highestOneBit(n));
     }
-    //fast ceil
+    // log base x of n
+    static double logx(int x, double n) {
+        return Math.log(n)/Math.log(x);
+    }
+    //fast ceil(a/b)
     int ceilDiv(int a,int b) {
         return (a+b-1)/b;
     }
 //    //GCD
+//    // almost fast as iterative due to tail recursion optimization
 //    static int gcd(int a,int b) {
 //        return b==0?a:gcd(b,a%b);
 //    }
     static int gcd(int a,int b) {
         int c;
         while(b!=0) {
-            c=a;
-            a=b;
+            c=a;a=b;
             b=c%b;
         }
         return a;
@@ -146,6 +150,16 @@ public class useful_algorithms {
         }
         return res;
     }
+    
+    // x^(y^e) % m
+    // https://cp-algorithms.com/algebra/phi-function.html#generalization
+    static long powmod_large(long x,int y,int e, int m) {
+        int z=phi(m);
+        if(e>=logx(y,logx(2,m))) // let, n=y^e;  if n > log2(m) :
+            return powmod(x,z+powmod(y,e,z),m); // x^n%m = [x^(phi(m)+(n%phi(m)))]%m
+        return powmod(x,(long)Math.pow(y,e),m); // else traditional way
+    }
+    
     // euler's totient function O(sqrt(n))
     // total number of co-prime numbers between 1 to n
     // co-prime: gcd(a,b)=1
@@ -226,11 +240,11 @@ public class useful_algorithms {
     }
     
     static int multiplymod(int a,int b,int m) {
-        return (a%m*b%m)%m;
+        return (int)((1l*a%m*b%m)%m);
     }
     
     static int divmod(int a,int b,int m) {
-        return (a%m * modinv(b,m)%m)%m;
+        return (a%m)*(modinv(b,m)%m)%m;
     }
 
     //Fast Inverse Square root (1/sqrt(x))
@@ -305,6 +319,36 @@ public class useful_algorithms {
         return x;
     }
     
+    static long nPr(int n,int r) {
+        long x=1;
+        for(int i=n-r+1;i<=n;i++) x*=i;
+        return x;
+    }
+    static long nCr(int n,int r) { //possibility of overflow
+        r=Math.min(r,n-r); //nCr= nC(n-r)
+        long x=1;
+        for(int i=1;i<=r;i++) x=(x*(n-r+i))/i; //the product of k consecutive integers is divisible by k!
+        return x;
+    }
+    
+    static BigInteger npr(int n,int r) {
+        BigInteger x=BigInteger.ONE;
+        for(int i=0;i<r;i++) x=x.multiply(new BigInteger(n-i+""));
+        return x;
+    }
+    static BigInteger ncr(int n,int r) {
+        BigInteger x=BigInteger.ONE;
+        for(int i=1,R=Math.min(r,n-r);i<=R;i++) x=x.multiply(new BigInteger(n-R+i+"")).divide(new BigInteger(i+""));
+        return x;
+    }
+    
+    static int ncr_mod_m(long n,long r,int m) {
+        /*
+         * See dsa/ncrModm 
+         */
+        throw new RuntimeException();
+    }
+    
     static int read(){int z=-1;try{z=System.in.read();}catch(Throwable e){}return z;} 
     static char nextChar(){char c=0;do c=(char)read();while(c<=32);return c;}
     static int nextInt(){
@@ -362,29 +406,6 @@ public class useful_algorithms {
             System.out.println(sb);
             sb.setLength(0);
         }
-    }
-    
-    static long nPr(int n,int r) {
-        long x=1;
-        for(int i=n-r+1;i<=n;i++) x*=i;
-        return x;
-    }
-    static long nCr(int n,int r) { //possibility of overflow
-        r=Math.min(r,n-r); //nCr= nC(n-r)
-        long x=1;
-        for(int i=1;i<=r;i++) x=(x*(n-r+i))/i; //the product of k consecutive integers is divisible by k!
-        return x;
-    }
-    
-    static BigInteger npr(int n,int r) {
-        BigInteger x=BigInteger.ONE;
-        for(int i=0;i<r;i++) x=x.multiply(new BigInteger(n-i+""));
-        return x;
-    }
-    static BigInteger ncr(int n,int r) {
-        BigInteger x=BigInteger.ONE;
-        for(int i=1,R=Math.min(r,n-r);i<=R;i++) x=x.multiply(new BigInteger(n-R+i+"")).divide(new BigInteger(i+""));
-        return x;
     }
     
     public static void main(String[] args) {
