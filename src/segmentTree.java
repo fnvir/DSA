@@ -1,3 +1,6 @@
+// outdated
+/* See segTreeMain.java or segment_tree.py or segTreeSumV2*/
+
 //see cses
 class segmentTree{
     int l,r;
