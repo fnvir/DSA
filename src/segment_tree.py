@@ -34,7 +34,7 @@ class segtree:
             self.rightChild.lazy+=self.lazy
         self.lazy=0
 
-    def point_update(self,inx,add):
+    def point_update(self,inx,add): # O(logN)
         '''add 'e' to element at index'''
         self.__lazyProp()
         if inx<self.l or self.r<inx: return
@@ -45,7 +45,7 @@ class segtree:
         self.rightChild.point_update(inx,add)
         self.recalc()
 
-    def point_assign(self,inx,v):
+    def point_assign(self,inx,v): # O(logN)
         '''set index to val'''
         self.__lazyProp()
         if inx<self.l or self.r<inx: return
@@ -56,7 +56,7 @@ class segtree:
         self.rightChild.point_assign(inx,v)
         self.recalc()
 
-    def range_update(self,l,r,e):
+    def range_update(self,l,r,e): # O(logN)
         '''add 'e' to all elements from index l to r '''
         self.__lazyProp()
         if l>self.r or r<self.l: return
@@ -68,7 +68,7 @@ class segtree:
         self.rightChild.range_update(l,r,e)
         self.recalc()
     
-    def range_assign(self,l,r,e):
+    def range_assign(self,l,r,e): # O(logN)
         '''set all elements from index [l,r] to "e"'''
         self.__lazyProp()
         if l>self.r or r<self.l: return
@@ -81,7 +81,7 @@ class segtree:
         self.rightChild.range_assign(l,r,e)
         self.recalc()
 
-    def range_query(self,l,r):
+    def range_query(self,l,r): # O(logN)
         '''get the value of the range [l,r]'''
         self.__lazyProp()
         if l>self.r or r<self.l: # update return vals acc. to func
@@ -94,7 +94,7 @@ class segtree:
             return self.val
         return self.f(self.leftChild.range_query(l,r),self.rightChild.range_query(l,r))
 
-    def point_query(self,inx):
+    def point_query(self,inx): # O(logN)
         '''get value at index'''
         self.__lazyProp()
         if self.l==self.r:
