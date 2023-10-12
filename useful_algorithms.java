@@ -1,19 +1,60 @@
+import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.BitSet;
 
-public class useful_algorithms {
+class misc {
+    
+    
+    
+    
     //Sieve of Eratosthenes 
-    static void sieve() {
-        int n=1000005;
+    static void sieve(int n) {
         boolean prime[]=new boolean[n+1];
 //        prime[0]=prime[1]=false;
         for(int i=2;i<n;i++) prime[i]=true; 
-        for(int p=2;(long)p*p<=n;p++){ 
+        for(int p=2;1l*p*p<=n;p++){ 
             if(prime[p]) { 
                 for(int i=p*p;i<=n;i+=p)
                     prime[i] = false; 
             }
         }
     }
+    
+    // more memory efficient for larger n(~1e8) but slower
+    static void sieve_bitwise(int n) { 
+        BitSet prime=new BitSet(n+1);
+        prime.set(2,n+1);
+        for(int p=2;1l*p*p<=n;p++)
+            if(prime.get(p))
+                for(int j=p*p;j<=n;j+=p)
+                    prime.clear(j);
+        //iterate over primes
+        long sum=0;
+        for(int p=prime.nextSetBit(0);p>-1&&p<Integer.MAX_VALUE;p=prime.nextSetBit(p+1))
+            sum+=p;
+        System.out.println("sum: "+sum);
+        System.out.println("count: "+prime.cardinality());
+    }
+    
+    // all primes less than or equal to n -> O(n)
+    static ArrayList<Integer> sieve2(int n) {
+        int lp[]=new int[n+1];
+        ArrayList<Integer> pr=new ArrayList<>();
+        for(int i=2;i<=n;i++) {
+            if(lp[i]==0) {
+                lp[i]=i;
+                pr.add(i);
+            }
+            for(int j=0;j<pr.size()&&pr.get(j)<=lp[i]&&i*pr.get(j)<=n;++j) {
+                lp[i*pr.get(j)]=pr.get(j);
+            }
+        }
+        return pr;
+    }
+    
+    static boolean isProbablePrime(long n) {return MillerRabin(n);}
+    
     static int lowerBound(int[] a,int l,int r,int elem) {
         while(l<r) {
             int m=l+(r-l)/2;
@@ -23,16 +64,19 @@ public class useful_algorithms {
         return l;
     }
     /***
-    C++, lower_bound() should return an index to the first element in the sorted container that is equal to or above
+    C++, lower_bound() should return an index to the first element in the sorted container
+    that is equal to or above
     the number being looked up, and -1 if there is no such element.
 
-    C++, upper_bound() should return an index to the first element in the sorted container that is above the number 
+    C++, upper_bound() should return an index to the first element in the sorted container 
+    that is above the number 
     being looked up, and -1 if there is no such element.
 
     In Java, you can use Collections.binarySearch to find the lower bound of the equal range in a 
     sorted list (Arrays.binarySearch provides a similar capability for arrays). 
     Then you continue iterating linearly until you hit to the end of the equal range.
     ***/
+    /* floor and ceiling in Treeset also provide similar complexity */
     static int upperBound(int[] a,int l,int r,int elem) {
         while(l<r) {
             int m=l+(r-l)/2;
@@ -113,16 +157,12 @@ public class useful_algorithms {
 //        return b==0?a:gcd(b,a%b);
 //    }
     static int gcd(int a,int b) {
-        int c;
-        while(b!=0) {
-            c=a;a=b;
-            b=c%b;
-        }
+        for(int c;b!=0;c=a,a=b,b=c%b);
         return a;
     }
     //LCM
     static int lcm(int a,int b) {
-        return (a/gcd(a,b))*b;
+        return a*b/gcd(a,b);
     }
     
     //Computes a^b using binary exponentiation
@@ -137,9 +177,13 @@ public class useful_algorithms {
         }
         return res;
     }
+    // sum from a to b
+    static long sum(int a,int b) {
+        return (b-a+1l)*(a+b)/2;
+    }
     // a^b % m
     // using binary exponentiation
-    static long powmod(long a, long b,int m) {
+    static long powmod(long a, long b,long m) {
         a%=m;
         long res=1;
         while(b>0) {
@@ -151,15 +195,47 @@ public class useful_algorithms {
         return res;
     }
     
-    // x^(y^e) % m
+    
+    // x^(y^e) % m (works in all cases)
     // https://cp-algorithms.com/algebra/phi-function.html#generalization
     static long powmod_large(long x,int y,int e, int m) {
-        int z=phi(m);
+        int z=phi(m); // precalc once if m constant; for primes m-1
         if(e>=logx(y,logx(2,m))) // let, n=y^e;  if n > log2(m) :
-            return powmod(x,z+powmod(y,e,z),m); // x^n%m = [x^(phi(m)+(n%phi(m)))]%m
+            return powmod(x,z+powmod(y,e,z),m); // x^n%m = [x^( phi(m)+(n%phi(m)) )]%m
         return powmod(x,(long)Math.pow(y,e),m); // else traditional way
     }
     
+    // works only if x and m are co-prime
+    static long powmodlargeSpecial(long x,int y,int e, int m) {
+        int z=phi(m); // precalc once if m constant; for primes m-1
+        return powmod(x,powmod(y,e,z),m);
+    }
+    
+    static boolean check_composite(long n,long a,long d,int s) {
+        long x=powmod(a,d,n);
+        if(x==1||x==n-1) return false;
+        for(int r=1;r<s;r++) {
+            x=x*x%n;
+            if(x==n-1) return false;
+        }
+        return true;
+    }
+    static boolean MillerRabin(long n) { // returns true if n is prime
+        if (n<2) return false;
+        int r=0;
+        long d=n-1;
+        while ((d&1)==0) {
+            d>>=1;
+            r++;
+        }
+        for(int a:new int[]{2,3,5,7,11,13,17,19,23,29,31,37}) {
+            if(n==a) return true;
+            if(check_composite(n,a,d,r)) return false;
+        }
+        return true;
+    }
+    
+
     // euler's totient function O(sqrt(n))
     // total number of co-prime numbers between 1 to n
     // co-prime: gcd(a,b)=1
@@ -206,6 +282,12 @@ public class useful_algorithms {
         }
         xy[0]=x; xy[1]=y; //soln
         return a; //gcd of a,b
+    }
+    // easier version of extendedEuclidean
+    static int[] extendedGCD(int a,int b) {
+        if(b==0) return new int[]{a,1,0}; // {gcd,x,y}
+        int z[]=extendedGCD(b,a%b);
+        return new int[]{z[0],z[2],z[1]-(a/b)*z[2]};
     }
     
     //modular inverse of n or n^-1
@@ -322,6 +404,7 @@ public class useful_algorithms {
     static long nPr(int n,int r) {
         long x=1;
         for(int i=n-r+1;i<=n;i++) x*=i;
+//        for(int i=0;i<r;i++) x*=n-i;
         return x;
     }
     static long nCr(int n,int r) { //possibility of overflow
@@ -338,14 +421,15 @@ public class useful_algorithms {
     }
     static BigInteger ncr(int n,int r) {
         BigInteger x=BigInteger.ONE;
-        for(int i=1,R=Math.min(r,n-r);i<=R;i++) x=x.multiply(new BigInteger(n-R+i+"")).divide(new BigInteger(i+""));
+        for(int i=1,R=Math.min(r,n-r);i<=R;i++)
+            x=x.multiply(new BigInteger(n-R+i+"")).divide(new BigInteger(i+""));
         return x;
     }
     
     static int ncr_mod_m(long n,long r,int m) {
         /*
          * See dsa/ncrModm 
-         */
+        */
         throw new RuntimeException();
     }
     
@@ -399,6 +483,7 @@ public class useful_algorithms {
             for(int j=0;j<m;j++) {
                 String s=" "+table[i][j];
                 int x=cl[j]-s.length();
+//                sb.append(" ".repeat((x-1)/2)).append(s).append(" ".repeat(x-(x-1)/2)).append("|"); //center
                 sb.append(" ".repeat(x/2)).append(s).append(" ".repeat(x-x/2)).append("|"); //center
 //                sb.append(s).append(" ".repeat(x)).append("|");
             }
@@ -413,4 +498,6 @@ public class useful_algorithms {
 //        printTable(a);
 //        System.out.println(factorial_length(300000-5));
     }
+    
+    
 }
