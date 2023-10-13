@@ -1,36 +1,29 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ncrMODm {
+class ncrMODm {
     
-    int[] spf;
-    long a[];
+    ArrayList<Integer> primes;
+    int a[];
     
     public ncrMODm(int maxM) {
-        spf=smallestPrimeFactor(maxM);
-        a=new long[maxM+1];
+        primes=sieve((int)Math.sqrt(maxM));
     }
     
     // nCr%any m  -> O(m log(n)log(m))
-    // n,r <= 1e18 ; m<=1e6 
+    // Space complexity-> O(sqrt(m))
+    // n,r <= 1e18 ; largest prime factor of m <= 3e8 (if m is not prime)
     public long comb(long n,long r,int m) {
-        HashMap<Integer,Integer> primes=primeFact_spf(m); //precalc once if 'm' is constant
-        int num[]=new int[primes.size()],rem[]=new int[primes.size()];
+        HashMap<Integer,Integer> pr=primefact(m); //precalc once if 'm' is constant
+        int num[]=new int[pr.size()],rem[]=new int[pr.size()];
         int i=0;
-        for(int p:primes.keySet()) {
-            int e=primes.get(p);
+        for(int p:pr.keySet()) {
+            int e=pr.get(p);
             num[i]=(int)Math.pow(p,e);
             rem[i]=(int)ncrMOD_pE(n,r,p,e);
             ++i;
         }
         return CRT(num,rem);
-    }
-    void precalc(long p,long e,int m) {
-        a[0]=a[1]=1;
-        for(int i=2;i<=m;i++)
-            a[i]=(a[i-1]*g(i,p))%m;
-    }
-    long g(long i,long p) {
-        return i%p==0?1:i;
     }
     // the largest power of p(a prime) that divides "n!" (legendre's formula)
     long E(long n,long p) {
@@ -52,6 +45,15 @@ public class ncrMODm {
         }
         return ans;
     }
+    long g(long i,long p) {
+        return i%p==0?1:i;
+    }
+    void precalc(long p,long e,int m) {
+        a=new int[m+1];
+        a[0]=a[1]=1;
+        for(int i=2;i<=m;i++)
+            a[i]=(int)(a[i-1]*(i%p==0?1:i)%m);
+    }
     // ncr mod p^e -> O(p^e logn)
     private long ncrMOD_pE(long n,long r,int p,long e) {
         if(n<r||r<0) return 0;
@@ -66,27 +68,34 @@ public class ncrMODm {
         long denominator=(F(n-r,p,m)*F(r,p,m))%m;
         return ((powmod(p,E,m)*numerator)%m)*(modInv(denominator,m)%m)%m;
     }
-    // smallest prime factors for each i from 1 to maxn -> O(sqrt(maxn))
-    int[] smallestPrimeFactor(int maxn) {
-        int spf[]=new int[maxn+1];
-        for(int i=2;i<=maxn;i++) {
-            spf[i]=i;
-            if((i&1)==0) spf[i]=2;
+    // all primes less than or equal to n -> O(n)
+    static ArrayList<Integer> sieve(int n) {
+        int lp[]=new int[n+1];
+        ArrayList<Integer> pr=new ArrayList<>();
+        for(int i=2;i<=n;i++) {
+            if(lp[i]==0) {
+                lp[i]=i;
+                pr.add(i);
+            }
+            for(int j=0;j<pr.size()&&pr.get(j)<=lp[i]&&i*pr.get(j)<=n;++j) {
+                lp[i*pr.get(j)]=pr.get(j);
+            }
         }
-        for(int i=3;i*i<=maxn;i+=2)
-            if(spf[i]==i) 
-                for(int j=i*i;j<=maxn;j+=i)
-                    if(spf[j]==j)
-                        spf[j]=i;
-        return spf;
+        return pr;
     }
-    //prime factorization with their count -> O(logn)
-    HashMap<Integer,Integer> primeFact_spf(int n) {
+    //prime factorization using sieve
+    HashMap<Integer,Integer> primefact(int n) {
         HashMap<Integer,Integer> m=new HashMap<>();
-        while (n!=1) {
-            m.put(spf[n],m.getOrDefault(spf[n],0)+1);
-            n/=spf[n];
+        for(int p:primes) {
+            if(1l*p*p>n) break;
+            int c=0;
+            while(n%p==0) {
+                ++c;
+                n/=p;
+            }
+            if(c>0) m.put(p,c);
         }
+        if(n>1) m.put(n,m.getOrDefault(n,0)+1);
         return m;
     }
     // Chinese remainder theorem to find 'x' such that x%num[i]=rem[i] for all i -> O(n)

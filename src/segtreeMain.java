@@ -9,7 +9,7 @@ class segTree{
     
     public segTree(int a[]) {
         n=a.length;
-        int z=1<<(32-Integer.numberOfLeadingZeros(n));
+        int z=1<<(32-Integer.numberOfLeadingZeros(n-1));
         tree=new long[2*z]; // if power of 2, then 2n size is enough
         lazy=new long[2*z];
         flag=new byte[2*z];

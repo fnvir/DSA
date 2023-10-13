@@ -1,4 +1,4 @@
-class SparseTableRMQ{
+public class SparseTableRMQ{
     int n,P,log2[],inx[][];
     long dp[][];
     
@@ -35,8 +35,7 @@ class SparseTableRMQ{
     long queryMin(int l,int r) {
         int len=r-l+1;
         int p=log2[len];
-        int k=1<<p;
-        long left=dp[p][l],right=dp[p][r-k+1];
+        long left=dp[p][l],right=dp[p][r-(1<<p)+1];
         return Math.min(left, right);
     }
     
